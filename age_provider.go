@@ -18,6 +18,12 @@ type FlatAgeFile struct {
 	Filename string
 }
 
+// isLeapYear, see: https://en.wikipedia.org/wiki/Leap_year#Gregorian_calendar
+func isLeapYear(date time.Time) bool {
+	year := date.Year()
+	return year%4 == 0 && year%100 != 0 && year%400 == 0
+}
+
 // LookupUserAge searches a flat file containing the date of birth of the user and returns how old the user is in years.
 func (f *FlatAgeFile) LookupUserAge() (int, *dbus.Error) {
 	buf, err := os.ReadFile(f.Filename)
@@ -29,11 +35,27 @@ func (f *FlatAgeFile) LookupUserAge() (int, *dbus.Error) {
 	if err != nil {
 		return 0, dbus.NewError("InvalidData", []any{err.Error()})
 	}
-	dlt := time.Now().Sub(dob)
+	now := time.Now()
+	now = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.Local)
 	year, err := time.ParseDuration("8760h")
 	if err != nil {
 		return 0, dbus.NewError("InternalError", []any{err.Error()})
 	}
-	age := dlt.Truncate(year).Hours() / 8760
-	return int(age), nil
+	leapYear, err := time.ParseDuration("8784h")
+	if err != nil {
+		return 0, dbus.NewError("InternalError", []any{err.Error()})
+	}
+	age := 0
+	truncDob := time.Date(dob.Year(), dob.Month(), dob.Day(), 0, 0, 0, 0, time.Local)
+	for truncDob.Before(now) {
+		if isLeapYear(truncDob) {
+			truncDob = truncDob.Add(leapYear)
+		} else {
+			truncDob = truncDob.Add(year)
+		}
+		if truncDob.Before(now) {
+			age++
+		}
+	}
+	return age, nil
 }

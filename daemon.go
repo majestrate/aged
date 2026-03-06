@@ -127,5 +127,6 @@ func (d *Daemon) GetAgeBracket() (string, *dbus.Error) {
 	if age < 13 {
 		bracket = Under13
 	}
+	log.Println(age, bracket)
 	return bracket, nil
 }
