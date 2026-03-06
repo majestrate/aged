@@ -21,7 +21,7 @@ type FlatAgeFile struct {
 // isLeapYear, see: https://en.wikipedia.org/wiki/Leap_year#Gregorian_calendar
 func isLeapYear(date time.Time) bool {
 	year := date.Year()
-	skip := year%100 == 0 || year%400 != 0
+	skip := year%100 == 0 && year%400 != 0
 	return year%4 == 0 && !skip
 }
 
