@@ -17,15 +17,15 @@ func TestGetAgeBracket(t *testing.T) {
 	if err != nil {
 		t.Fatal(err.Error())
 	}
-	assertBracket := func(age string, minage, maxage int) {
+	assertBracket := func(expected string, minage, maxage int) {
 		for n := minage; n <= maxage; n++ {
 			daemon.AgeProvider = mockAgeProvider(n)
 			bracket, err := daemon.GetAgeBracket()
 			if err != nil {
 				t.Fatal(err.Error())
 			}
-			if bracket != age {
-				t.Error("Expected ", n, " to be ", age)
+			if bracket != expected {
+				t.Error("Expected ", n, " to be ", expected, "but was: ", bracket)
 				t.FailNow()
 			}
 		}
