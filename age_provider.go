@@ -21,7 +21,8 @@ type FlatAgeFile struct {
 // isLeapYear, see: https://en.wikipedia.org/wiki/Leap_year#Gregorian_calendar
 func isLeapYear(date time.Time) bool {
 	year := date.Year()
-	return year%4 == 0 && year%100 != 0 && year%400 == 0
+	skip := year%100 == 0 || year%400 != 0
+	return year%4 == 0 && !skip
 }
 
 // LookupUserAge searches a flat file containing the date of birth of the user and returns how old the user is in years.
