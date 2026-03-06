@@ -12,7 +12,7 @@ func (m mockAgeProvider) LookupUserAge() (int, *dbus.Error) {
 	return int(m), nil
 }
 
-func TestAgeProvider(t *testing.T) {
+func TestGetAgeBracket(t *testing.T) {
 	daemon, err := aged.NewDaemon()
 	if err != nil {
 		t.Fatal(err.Error())
@@ -25,11 +25,12 @@ func TestAgeProvider(t *testing.T) {
 				t.Fatal(err.Error())
 			}
 			if bracket != age {
-				t.Fail()
+				t.Error("Expected ", n, " to be ", age)
+				t.FailNow()
 			}
 		}
 	}
-	assertBracket(aged.Under13, 1, 12)
+	assertBracket(aged.Under13, 0, 12)
 	assertBracket(aged.Between13And16, 13, 16)
 	assertBracket(aged.Seventeen, 17, 17)
 	assertBracket(aged.Adult, 18, 20)
