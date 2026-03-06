@@ -100,7 +100,7 @@ const Under13 = "<13"
 const Between13And16 = ">=13,<=16"
 
 // Seventeen denotes the user is 17 years old.
-const Seventeen = "17"
+const Seventeen = "=17"
 
 // Adult denotes that the user is above 18 years of age.
 const Adult = ">=18"
