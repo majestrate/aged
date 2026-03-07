@@ -25,14 +25,16 @@ func main() {
 	signalChan := make(chan os.Signal)
 	signal.Notify(signalChan, os.Interrupt)
 	signal.Notify(signalChan, syscall.SIGHUP)
-	select {
-	case sig := <-signalChan:
-		if sig == os.Interrupt {
-			aged.NotifyShutdown()
-		}
-		daemon.HandleSignal(sig)
-		if !daemon.Running() {
-			return
+	for {
+		select {
+		case sig := <-signalChan:
+			if sig == os.Interrupt {
+				aged.NotifyShutdown()
+			}
+			daemon.HandleSignal(sig)
+			if !daemon.Running() {
+				return
+			}
 		}
 	}
 }
