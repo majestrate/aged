@@ -7,7 +7,13 @@ Runs on the session bus for each user.
 ## Building
 
 ```bash
-$ go get github.com/majestrate/aged/cmd/aged
+$ go get -u github.com/majestrate/aged/cmd/aged
+```
+
+Build with sd_notify support:
+
+```bash
+$ go get -u -tags=systemd github.com/majestrate/aged/cmd/aged
 ```
 
 ## Usage

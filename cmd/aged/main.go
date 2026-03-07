@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/majestrate/aged"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/majestrate/aged"
 )
 
 func main() {
@@ -20,12 +21,15 @@ func main() {
 		Filename: fmt.Sprintf("%s/.config/birthday", os.Getenv("HOME")),
 	}
 	daemon.SetupHandler()
-
+	aged.NotifyReady()
 	signalChan := make(chan os.Signal)
 	signal.Notify(signalChan, os.Interrupt)
 	signal.Notify(signalChan, syscall.SIGHUP)
 	select {
 	case sig := <-signalChan:
+		if sig == os.Interrupt {
+			aged.NotifyShutdown()
+		}
 		daemon.HandleSignal(sig)
 		if !daemon.Running() {
 			return
