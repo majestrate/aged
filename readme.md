@@ -7,7 +7,7 @@ Runs on the session bus for each user.
 ## Building
 
 ```bash
-$ go get github.com/majestrate/aged
+$ go get github.com/majestrate/aged/cmd/aged
 ```
 
 ## Usage
