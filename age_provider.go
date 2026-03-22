@@ -1,8 +1,6 @@
 package aged
 
 import (
-	"bytes"
-	"os"
 	"time"
 
 	"github.com/godbus/dbus/v5"
@@ -13,9 +11,9 @@ type AgeProvider interface {
 	LookupUserAge() (int, *dbus.Error)
 }
 
-// FlatAgeFile is an AgeProvider that searches for the date of birth of the user from a user readable flat file.
-type FlatAgeFile struct {
-	Filename string
+// LocalAgeProvider is an AgeProvider that searches for the date of birth of the user from a DoBProvider.
+type LocalAgeProvider struct {
+	DoBProvider DoBProvider
 }
 
 // isLeapYear, see: https://en.wikipedia.org/wiki/Leap_year#Gregorian_calendar
@@ -26,13 +24,9 @@ func isLeapYear(date time.Time) bool {
 }
 
 // LookupUserAge searches a flat file containing the date of birth of the user and returns how old the user is in years.
-func (f *FlatAgeFile) LookupUserAge() (int, *dbus.Error) {
-	buf, err := os.ReadFile(f.Filename)
-	if err != nil {
-		return 0, dbus.NewError("MissingData", []any{err.Error()})
-	}
-	buf = bytes.TrimSpace(buf)
-	dob, err := time.Parse(time.DateOnly, string(buf))
+func (l *LocalAgeProvider) LookupUserAge() (int, *dbus.Error) {
+
+	dob, err := l.DoBProvider.GetDoB()
 	if err != nil {
 		return 0, dbus.NewError("InvalidData", []any{err.Error()})
 	}

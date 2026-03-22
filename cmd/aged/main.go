@@ -17,9 +17,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	daemon.AgeProvider = &aged.FlatAgeFile{
-		Filename: fmt.Sprintf("%s/.config/birthday", os.Getenv("HOME")),
-	}
+	daemon.AgeProvider =
+		&aged.LocalAgeProvider{
+			DoBProvider: &aged.FlatFileDoBProvider{
+				Filename: fmt.Sprintf("%s/.config/birthday", os.Getenv("HOME")),
+			},
+		}
 	daemon.SetupHandler()
 	aged.NotifyReady()
 	signalChan := make(chan os.Signal)
